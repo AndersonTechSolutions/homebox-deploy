@@ -1,0 +1,28 @@
+name: homebox
+
+# HomeBox — self-hosted inventory / organization system for home use.
+# Upstream: https://github.com/sysadminsmedia/homebox
+# Image: ghcr.io/sysadminsmedia/homebox — we track the :latest tag and rely on
+# Komodo's poll_for_updates to pick up new releases.
+
+services:
+  homebox:
+    image: ghcr.io/sysadminsmedia/homebox:latest
+    container_name: homebox
+    restart: unless-stopped
+    environment:
+      TZ: America/New_York
+      HBOX_MODE: production
+      HBOX_STORAGE_CONN_STRING: file:///?no_tmp_dir=true
+      HBOX_STORAGE_PREFIX_PATH: data
+      HBOX_DATABASE_SQLITE_PATH: /data/homebox.db?_pragma=busy_timeout=2000&_pragma=journal_mode=WAL&_fk=1&_time_format=sqlite
+    volumes:
+      - /opt/homebox/data:/data
+    ports:
+      - "10.10.0.162:3100:7745"
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1:7745/api/v1/status"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
