@@ -21,7 +21,7 @@ services:
     ports:
       - "10.10.0.162:3100:7745"
     healthcheck:
-      test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1:7745/api/v1/status"]
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:7745/api/v1/status"]
       interval: 30s
       timeout: 5s
       retries: 3
